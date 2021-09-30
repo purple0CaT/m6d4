@@ -8,7 +8,6 @@ const Review = sequelize.define(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     text: { type: DataTypes.TEXT, allowNull: false },
-    username: { type: DataTypes.STRING, allowNull: false },
   },
   { timestamps: false }
 );

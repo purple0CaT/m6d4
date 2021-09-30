@@ -2,7 +2,7 @@ import express from "express";
 import s from "sequelize";
 import db from "../../db/modules/connect.js";
 const { Op } = s;
-const { Product, Review } = db;
+const { Product, Review, User } = db;
 //=
 const products = express.Router();
 //=
@@ -11,7 +11,7 @@ products
   .get(async (req, res, next) => {
     try {
       const data = await Product.findAll({
-        include: Review,
+        include: [{ model: Review, include: User }],
         order: [["price", "ASC"]],
         where: req.query.search
           ? {
