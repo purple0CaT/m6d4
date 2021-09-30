@@ -2,7 +2,7 @@ import express from "express";
 import s from "sequelize";
 import db from "../../db/modules/connect.js";
 const { Op } = s;
-const { Product, Review, User } = db;
+const { Product, Review, User, Category, ProductCateg } = db;
 //=
 const products = express.Router();
 //=
@@ -11,8 +11,11 @@ products
   .get(async (req, res, next) => {
     try {
       const data = await Product.findAll({
-        include: [{ model: Review, include: User }],
-        order: [["price", "ASC"]],
+        include: [
+          { model: Category, through: { attributes: [] } },
+          { model: Review, include: User },
+        ],
+        order: [["id", "DESC"]],
         where: req.query.search
           ? {
               [Op.or]: [
@@ -30,6 +33,11 @@ products
   .post(async (req, res, next) => {
     try {
       const data = await Product.create(req.body);
+      // In this line youre inserting your category id and post id to the many-to-many table
+      const categData = await ProductCateg.create({
+        categoryId: req.body.categoryId,
+        productId: data.dataValues.id,
+      });
       res.send(data);
     } catch (error) {
       console.log(error);

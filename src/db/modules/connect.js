@@ -10,6 +10,7 @@ Review.belongsTo(Product);
 User.hasMany(Review, { foreignKey: "user_id" });
 Review.belongsTo(User, { foreignKey: "user_id" });
 
+// Product.hasMany(Category);
 Product.belongsToMany(Category, {
   through: { model: ProductCateg, unique: false },
 });
