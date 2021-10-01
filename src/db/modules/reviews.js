@@ -8,6 +8,13 @@ const Review = sequelize.define(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     text: { type: DataTypes.TEXT, allowNull: false },
+    rate: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 0,
+        max: 5,
+      },
+    },
   },
   { timestamps: false }
 );

@@ -15,17 +15,18 @@ products
           { model: Category, through: { attributes: [] } },
           { model: Review, include: User },
         ],
-        order: [["id", "DESC"]],
+        order: [["id", "ASC"]],
+        offset: req.query.page ? (req.query.page - 1) * 5 : 0,
+        limit: 5,
         where: req.query.search
           ? {
-              [Op.or]: [
-                { name: { [Op.iLike]: `%${req.query.search}%` } },
-                { category: { [Op.iLike]: `%${req.query.search}%` } },
-              ],
+              categories: { [Op.iLike]: `%${req.query.search}%` },
             }
           : {},
       });
-      res.send(data);
+      const pages = await Product.count();
+      const response = [data, { pages: pages }];
+      res.send(response);
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +49,10 @@ products
   .get(async (req, res, next) => {
     try {
       const data = await Product.findAll({
-        include: Review,
+        include: [
+          { model: Review, include: User },
+          { model: Category, through: { attributes: [] } },
+        ],
         where: { id: req.params.id },
       });
       res.send(data);

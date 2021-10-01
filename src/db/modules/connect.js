@@ -1,3 +1,4 @@
+import Cart from "./cart.js";
 import Category from "./category.js";
 import ProductCateg from "./prodCategor.js";
 import Product from "./products.js";
@@ -17,5 +18,14 @@ Product.belongsToMany(Category, {
 Category.belongsToMany(Product, {
   through: { model: ProductCateg, unique: false },
 });
+// CARTS
+Product.belongsToMany(User, { through: { model: Cart, unique: false } });
+User.belongsToMany(Product, { through: { model: Cart, unique: false } });
 
-export default { Product, Review, User, Category, ProductCateg };
+User.hasMany(Cart);
+Cart.belongsTo(User);
+
+Product.hasMany(Cart);
+Cart.belongsTo(Product);
+
+export default { Product, Review, User, Category, ProductCateg, Cart };
