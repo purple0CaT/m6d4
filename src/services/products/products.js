@@ -20,10 +20,11 @@ products
         limit: 5,
         where: req.query.search
           ? {
-              categories: { [Op.iLike]: `%${req.query.search}%` },
+              category: { [Op.iLike]: `%${req.query.search}%` },
             }
           : {},
       });
+
       const pages = await Product.count();
       const response = [data, { pages: pages }];
       res.send(response);
