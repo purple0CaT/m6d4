@@ -24,17 +24,18 @@ products
     try {
       const data = await Product.findAll({
         include: [
-          { model: Category, through: { attributes: [] } },
+          {
+            model: Category,
+            through: { attributes: [] },
+            where: req.query.search
+              ? { text: { [Op.iLike]: `%${req.query.search}%` } }
+              : {},
+          },
           { model: Review, include: User },
         ],
         order: [["id", "ASC"]],
         offset: req.query.page ? (req.query.page - 1) * 5 : 0,
         limit: 5,
-        where: req.query.search
-          ? {
-              category: { [Op.iLike]: `%${req.query.search}%` },
-            }
-          : {},
       });
 
       const pages = await Product.count();
