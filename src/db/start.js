@@ -4,14 +4,16 @@ const { PGHOST, PGUSER, PGDATABASE, PGPASSWORD, PGPORT, DATABASE_URL } =
   process.env;
 
 const sequelize = new Sequelize(DATABASE_URL, {
+  // port: PGPORT,
+  // host: PGHOST,
   dialect: "postgres",
-  protocol: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
+   protocol: 'postgres',
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
 });
 
 const testDb = async () => {

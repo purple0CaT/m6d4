@@ -1,8 +1,20 @@
 import express from "express";
+import createHttpError from "http-errors";
+import multer from "multer";
 import s from "sequelize";
 import db from "../../db/modules/connect.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+
 const { Op } = s;
 const { Product, Review, User, Category, ProductCateg } = db;
+//=
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary, //authomatic read cloud URL
+  params: {
+    folder: "amazonTest-Img",
+  },
+});
 //=
 const products = express.Router();
 //=
@@ -91,4 +103,32 @@ products
       console.log(error);
     }
   });
+products.post(
+  "/:id/uploadPhoto",
+  multer({
+    storage: cloudinaryStorage,
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype != "image/jpeg" && file.mimetype != "image/png")
+        cb(createHttpError(400, "Format not suported!"), false);
+      else cb(null, true);
+    },
+  }).single("image"),
+  async (req, res, next) => {
+    try {
+      let urlPhoto = req.file.path;
+      const data = await Product.update(
+        { image: urlPhoto },
+        {
+          where: {
+            id: req.params.id,
+          },
+          returning: true,
+        }
+      );
+      res.status(201).send(data[1][0]);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 export default products;
