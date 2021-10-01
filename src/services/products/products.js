@@ -50,8 +50,8 @@ products
     try {
       const data = await Product.findAll({
         include: [
-          { model: Review, include: User },
           { model: Category, through: { attributes: [] } },
+          { model: Review, include: User },
         ],
         where: { id: req.params.id },
       });
