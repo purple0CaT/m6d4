@@ -33,7 +33,7 @@ carts
         include: [Product, User],
         attributes: [
           "productId",
-          [s.fn("count", s.col("cart.id")), "prod_sum"],
+          [s.fn("count", s.col("cart.id")), "prod_qty"],
         ],
         group: ["product.id", "user.id", "cart.productId"],
       })
