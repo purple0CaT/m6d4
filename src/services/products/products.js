@@ -27,9 +27,7 @@ products
           {
             model: Category,
             through: { attributes: [] },
-            where: req.query.search
-              ? { text: { [Op.iLike]: `%${req.query.search}%` } }
-              : {},
+            where: req.query.search ? { id: `${req.query.search}` } : {},
           },
           { model: Review, include: User },
         ],
