@@ -8,7 +8,9 @@ const carts = express.Router();
 
 carts.route("/").get(async (req, res, next) => {
   try {
-    const data = await Cart.findAll({ where: { userId: req.params.userId } });
+    const data = await Cart.findAll({
+      include: [Product, User],
+    });
     res.send(data);
   } catch (error) {
     console.log(error);
@@ -27,18 +29,18 @@ carts.post("/:prodId", async (req, res, next) => {
   }
 });
 carts
-  .route("/:id")
+  .route("/:userId")
   .get(async (req, res, next) => {
     try {
       const data = await Cart.findAll({
-        where: { userId: req.params.id },
+        where: { userId: req.params.userId },
         include: [Product, User],
         attributes: [
           "productId",
           [s.fn("count", s.col("cart.id")), "prod_qty"],
         ],
         group: ["product.id", "user.id", "cart.productId"],
-      });
+      })
       // .then((cart) => {
       //   return cart.map(
       //     (c) =>
@@ -68,7 +70,12 @@ carts
     res.send(data[1][0]);
   })
   .delete(async (req, res, next) => {
-    const data = await Cart.destroy({ where: { id: req.params.id } });
+    const data = await Cart.destroy({
+      where: {
+        userId: req.params.userId,
+        $or: [{ productId: req.body.productId }],
+      },
+    });
     if (data > 0) {
       res.send("Ok!");
     } else {
